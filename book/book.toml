@@ -2,8 +2,8 @@
 authors = ["Paul Adamson"]
 language = "en"
 src = "src"
-title = "Building wine"
-description = "Building the wine LinkML ontology from scratch, following Ontology Development 101 adapted to LinkML"
+title = "Building GODM"
+description = "Building GODM, a grounded ontology of data models, from scratch in LinkML, following Ontology Development 101"
 
 [build]
 build-dir = "build"
@@ -26,12 +26,9 @@ number-listings = true
 # artifact itself -- see `references/captions.md` in the mdbook-listings
 # skill for the full rule set.
 show-listing-provenance = true
-# In-page {{#list-of-listings}} index (see src/list-of-listings.md).
+# In-page {{#list-of-listings}} index (src/list-of-listings.md) plus each
+# page's listings nested under their section in the sidebar.
 list-of-listings = true
-# "nested" puts each page's listings under their section heading in the
-# per-page TOC (e.g. Listing 4.1 under "The classes"). NOT "append",
-# whose book-wide section overlays mdbook's TOC with this theme (dogfood
-# finding filed to mdbook-listings 2026-07-27).
 list-of-listings-sidebar = "nested"
 
 [output]

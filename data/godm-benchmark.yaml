@@ -1,4 +1,4 @@
-# The competency questions of myschema as a cqa benchmark: one record per
+# The competency questions of godm as a cqa benchmark: one record per
 # question, each pairing the question with the specification of its
 # correct answer over the worked-example graph (Appendix A).
 #
@@ -13,10 +13,10 @@
 # A question the schema itself answers (which characteristics to
 # consider, say) has no record to anchor and stays prose. Say so here in
 # a comment rather than inventing one.
-id: myschema-benchmark
-name: myschema competency questions
+id: godm-benchmark
+name: godm competency questions
 description: >-
-  The competency questions of the myschema ontology, each paired with the
+  The competency questions of the godm ontology, each paired with the
   specification of its correct answer over the worked-example graph.
 
 # The claims below are about one graph at one version. The schema URI,
@@ -26,7 +26,7 @@ description: >-
 # Step 7). Once `[check.cqa]` is on, the version pins are compared with
 # this package's declared version on every run, so a release the
 # benchmark has not been re-read against fails instead of reading green.
-target_schema: https://w3id.org/myschema/
+target_schema: https://w3id.org/godm/
 target_schema_version: 0.1.0
 target_dataset: worked-example
 target_dataset_version: 0.1.0

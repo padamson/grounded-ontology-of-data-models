@@ -7,6 +7,12 @@
       "skillPath": "skills/mdbook-listings/SKILL.md",
       "computedHash": "69cb45c4cb7f0ec5e4a8245d7c596aec74e3471a9351d2703398b7185407e63c"
     },
+    "ontology-authoring-advance-step": {
+      "source": "padamson/ontology-authoring-template",
+      "sourceType": "github",
+      "skillPath": "skills/ontology-authoring-advance-step/SKILL.md",
+      "computedHash": "07c0154265dcf829448a2020ce61dd046e32983f388d60f6eff4f290f205e08d"
+    },
     "panschema-development": {
       "source": "padamson/panschema",
       "sourceType": "github",

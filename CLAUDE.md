@@ -1,24 +1,24 @@
-# wine
-
-> **This repo is the worked showcase for the ontology-authoring-template.**
-> It builds a small wine ontology from scratch to demonstrate the method.
-> A consumer who wants their own ontology runs the **erect-scaffold** skill,
-> which discards this showcase and restores the blank template baseline
-> (then **setup-ontology** renames it). See README "Start your own".
+# GODM — a grounded ontology of data models
 
 A [LinkML](https://linkml.io) ontology grounded in BFO 2020 (ISO/IEC
 21838-2:2020) and the Common Core Ontologies (CCO), authored following
 *Ontology Development 101* (Noy & McGuinness, 2001 — "N&M") adapted to
-LinkML. It models wines, the grapes and regions behind them, and the
-pairing and vintage-quality judgments made about them.
+LinkML.
 
 The repo is two things at once:
 
-- **`schema/wine.yaml`** — the schema artifact itself.
-- **`book/`** — *Building wine*, an mdbook that is the public log of
+- **`schema/godm.yaml`** — the schema artifact itself.
+- **`book/`** — *Building GODM*, an mdbook that is the public log of
   building the schema from scratch, following N&M adapted to LinkML.
   Each N&M step gets a chapter; the schema grows incrementally with
   **frozen listings** embedded at each stage.
+
+GODM models data models (OWL ontologies, LinkML schemas, JSON Schemas,
+SHACL shapes graphs and relational schemas), their parts, the relations
+between models, and the datasets that conform to them, so that
+data-modeling tools and schemas share one vocabulary for what they
+describe. Prefix `godm`, namespace `https://w3id.org/godm/`. The schema
+starts at `version: 0.1.0-dev`; releases are reachable via their git tags.
 
 ## Chapter ↔ N&M step
 
@@ -47,25 +47,25 @@ rules, and the tag/SHA-256 identity model. **Consult that skill
 `references/captions.md`) for how the tool works** — this section records
 only what's specific to *this* repo.
 
-The book embeds **frozen snapshots** of `schema/wine.yaml` so a
+The book embeds **frozen snapshots** of `schema/godm.yaml` so a
 later edit can't silently change what a chapter renders. Repo
 conventions on top of the tool:
 
-- **Freeze from `book/`**, source `../schema/wine.yaml`, tag
-  `wine-yaml-v<N>`. Each chapter that advances the schema bumps
+- **Freeze from `book/`**, source `../schema/godm.yaml`, tag
+  `godm-yaml-v<N>`. Each chapter that advances the schema bumps
   the tag so earlier chapters keep pointing at the snapshot they
   froze:
-  `cd book && mdbook-listings freeze ../schema/wine.yaml --tag wine-yaml-v2 --force`
+  `cd book && mdbook-listings freeze ../schema/godm.yaml --tag godm-yaml-v2 --force`
 - **Captions never name the artifact.** `show-listing-provenance = true`
   in `book.toml` renders the source path and frozen tag under every
-  caption, so a caption that repeats `schema/wine.yaml` or its tag says it twice. A
+  caption, so a caption that repeats `schema/godm.yaml` or its tag says it twice. A
   caption states what the reader is looking at *and why it is here*, or
   it is omitted — the provenance line already covers what the listing is.
   The full rule set is `references/captions.md` in the mdbook-listings
   skill. Keep the local binary at or past the CI pin: 0.2.0 ignores the
   key silently, so a stale local binary previews without the line CI
   renders with.
-- **Callouts on files we author here** (e.g. `schema/wine.yaml`)
+- **Callouts on files we author here** (e.g. `schema/godm.yaml`)
   go *inline* as `# CALLOUT:` markers — never sidecar TOML, which is
   reserved for generated/third-party/no-comment-syntax listings.
 - **Integrity check:** two gates run. `mdbook-listings verify
@@ -85,13 +85,13 @@ conventions on top of the tool:
 `scripts/dev.sh` watches `schema/`, `book/src/`, and `book/*.toml`
 and rebuilds the combined `site/` on change (via `scripts/rebuild.sh`,
 which also runs `mdbook-listings install` to refresh callout CSS/JS).
-But **editing `schema/wine.yaml` does not re-freeze the listing**
+But **editing `schema/godm.yaml` does not re-freeze the listing**
 — a frozen listing is a point-in-time snapshot by design. The watcher
 will rebuild from the *old* frozen bytes, so callout/listing changes
 won't appear until you re-freeze. The loop:
 
-1. Edit `schema/wine.yaml` (markers and all).
-2. `cd book && mdbook-listings freeze ../schema/wine.yaml --tag <tag> --force`
+1. Edit `schema/godm.yaml` (markers and all).
+2. `cd book && mdbook-listings freeze ../schema/godm.yaml --tag <tag> --force`
    (writing `book/src/listings/<tag>.yaml` — itself watched — triggers the rebuild).
 3. Hard-refresh the browser (Cmd+Shift+R) to bust cached CSS/JS/HTML.
 
@@ -116,7 +116,8 @@ Preprocessors must be on `PATH`: `mdbook-listings`, and the
 gitignored book→schema toolbar-link assets that `book.toml` references
 (`scripts/install-assets.sh` runs all three installers).
 
-The cqa contract is a pinned dependency: `panschema.toml` names it by
+The cqa contract (the schema the competency-question benchmark conforms
+to) is a pinned dependency: `panschema.toml` names it by
 `source = "github:padamson/cqa-schema"` plus `version`, and
 `panschema.lock` (committed) records the checksum that pin resolved to.
 Run `panschema fetch` once after cloning to populate the local cache
@@ -148,13 +149,14 @@ Agent skills are pinned dependencies, the same as the cqa contract.
 ```bash
 npx skills add padamson/mdbook-listings -s mdbook-listings -a claude-code -y
 npx skills add padamson/panschema -s panschema-development -a claude-code -y
+npx skills add padamson/ontology-authoring-template \
+  -s ontology-authoring-advance-step -a claude-code -y
 ```
 
-This repo is also a skill *producer*: `ontology-authoring-advance-step`
-lives in `skills/` and is reached through a tracked symlink in
-`.claude/skills/`, so it is never installed here. Nor are `erect-scaffold`
-and `setup-ontology`, which are bootstrap-only and marked
-`metadata.internal: true` so the CLI does not offer them.
+The authoring skill is **consumed, not forked**. Five repos seeded from
+this template once carried five diverged copies of it, because the
+bootstrap edited the copy on every run. Take the install and this repo
+holds nothing that can drift.
 
 **Run installs and refreshes from a plain terminal, never from inside a
 Claude Code session.** The sandbox denies writes under `.claude/skills/`;
@@ -190,6 +192,13 @@ why.
   example (Appendix A) needs it, not speculatively. The worked example
   should drive the build from Step 1 — if a class or slot only earns
   its keep once instances are built (Step 7), that is a smell.
+- **Competency questions are data.** From Step 1 they live in
+  `data/godm-benchmark.yaml` as records of the cqa contract, each
+  with its answer kind and the anchors a correct answer must reach,
+  pinned to this package's version. The anchors are promises until the
+  worked example mints them; `[check.cqa]` in `panschema.toml` turns on
+  at Step 7 and holds them against the graph on every push. A question
+  the schema itself answers stays prose, noted in the file.
 - **External grounding is by URI, not import.** BFO/CCO/etc. are
   referenced via `subclass_of` + prefixes, *not* LinkML `imports:`
   (which is for other LinkML schemas — only `linkml:types` is
@@ -199,7 +208,9 @@ why.
 - **Declare `default_range` once; never repeat it per slot.** A slot
   whose range is the default omits `range:` entirely, so a `range:`
   line always means the slot differs (an enum, a class, a `uri`, a
-  number).
+  number). Repeating the default buries the two or three ranges that
+  carry information, and the noise is paid on every book page that
+  renders the slot block.
 - **Schema descriptions state domain and purpose, nothing else.**
   `description:` fields ship with the artifact (generated docs, RDF,
   downstream graphs), so they carry only what a consumer of the *artifact*
@@ -247,11 +258,10 @@ after 1.0), and the default is not to revise.
 - **Within an edition, the book is a log.** Narrate reversals and dead
   ends as they happened, and do not retro-edit earlier chapters to hide a
   path that was later abandoned. Work that comes from using the ontology
-  rather than from an N&M step goes in the refinements chapter after the
-  seven steps (`ch08-refinements.md` here), one section per refinement,
-  in release order. Wine's `v0.2.0` and `v0.2.1` both landed this way: the
-  model grew and tightened, and no decision ch01–ch07 derive was
-  reversed.
+  rather than from an N&M step goes in a refinements chapter after the
+  seven steps, one section per refinement, in release order. A minor
+  release that grows or tightens the model without contradicting what
+  ch01–ch07 derive belongs there too.
 - **A minor release revises the edition when the log would mislead.** If
   the release reverses a decision earlier chapters build on, a reader who
   follows the book from Chapter 1 ends up with a model the schema no
@@ -267,9 +277,9 @@ after 1.0), and the default is not to revise.
   that also applies to `main` lands there separately.
 - **Listing tags on a second line carry the line.** A listing frozen on
   an older patch line, or for a revised edition, puts the minor version
-  in its tag (`wine-yaml-0.1-v7`, `wine-yaml-0.3-v1`), so it cannot
-  collide with a same-numbered tag frozen on `main`. A revised edition
-  re-freezes all its listings under its own series.
+  in its tag (`godm-yaml-0.1-v7`, `godm-yaml-0.3-v1`), so it
+  cannot collide with a same-numbered tag frozen on `main`. A revised
+  edition re-freezes all its listings under its own series.
 
 ## Lessons
 

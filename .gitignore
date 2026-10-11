@@ -17,12 +17,8 @@ book/schema-link.js
 # skills-lock.json (committed); the content is fetched, like panschema's
 # dependency cache, so it is not vendored here.
 /.agents/
-# Only the FETCHED skills are ignored, named one by one — this repo is a
-# skill producer, so most of `.claude/skills/` is tracked on purpose:
-# erect-scaffold, setup-ontology, README.md, and a symlink to this repo's
-# own `skills/`. The rule is track a skill entry when its target is tracked,
-# ignore it when the target is fetched; a blanket ignore here would invert
-# that for the majority. Add a line when the who-consumes-what table gains
-# a row for this repo.
-/.claude/skills/mdbook-listings/
-/.claude/skills/panschema-development/
+# The Claude Code entries are fetched copies, so tracking them would commit
+# content the lockfile already pins. Track a skill entry only when its
+# target is tracked in this repo — a skill you author here would need a `!`
+# negation.
+/.claude/skills/

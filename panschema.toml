@@ -5,38 +5,52 @@
 # (deployed with the docs site). HTML documentation comes from
 # `panschema publish` + panschema-publish.toml, not here.
 #
+# This blank-slate version lists the schema-level (T-box) formats for
+# godm, since a fresh ontology has no instance data of its own yet.
+# Once you have an A-box (data/<name>-instances.yaml), add an
+# `instances = ["data/<name>-instances.yaml"]` line and an
+# `instance-graph-json = "site/artifacts/<name>-instances.graph.json"`
+# key under [generate.godm] to also emit the knowledge graph.
+#
 # `path = "."` references THIS repo's own package (the panschema-publish.toml
-# at the root) — the local-package field, distinct from `source`, which is for
-# remote `github:` dependencies. Format keys are deny_unknown_fields, so a typo
-# is a hard parse error, not a skip: note `json_schema` (underscore) but
-# `instance-graph-json` (hyphens). Postgres is deliberately omitted: wine's
-# multivalued attributes make that writer skip most classes.
-[schemas.wine]
+# at the root) — the local-package field, distinct from `source`, which is
+# for remote `github:` dependencies. Keys are deny_unknown_fields, so a typo
+# is a hard error: note `json_schema` (underscore).
+[schemas.godm]
 path = "."
 
-[generate.wine]
-shacl = "site/artifacts/wine-shapes.ttl"
-json_schema = "site/artifacts/wine.schema.json"
-ttl = "site/artifacts/wine.ttl"
-instance-graph-json = "site/artifacts/wine-instances.graph.json"
-instances = ["data/wine-instances.yaml"]
+[generate.godm]
+shacl = "site/artifacts/godm-shapes.ttl"
+json_schema = "site/artifacts/godm.schema.json"
+ttl = "site/artifacts/godm.ttl"
 
-# CALLOUT: dep The benchmark is instance data of the cqa contract, not of wine, so it is verified under its own schema entry. The contract is a released dependency: `source` names where it is published, `version` pins the release, and panschema.lock records the checksum a fetch resolved that pin to. CI runs `panschema fetch --check` against the lockfile.
+# The competency questions are data from Step 1: data/godm-benchmark.yaml
+# holds them as records of the cqa contract (a schema for competency
+# question-and-answer benchmarks), not of godm, so the file is verified
+# under its own schema entry. `source` names where the contract is
+# published and `version` pins the release; panschema.lock records the
+# checksum a `panschema fetch` resolved that pin to. Run `panschema fetch`
+# once after cloning.
 [schemas.cqa]
 source = "github:padamson/cqa-schema"
 version = "0.1.1"
 
-# CALLOUT: artifact The benchmark as a self-contained knowledge graph (cqa's classes plus wine's records), published beside wine.ttl.
+# The benchmark as a self-contained knowledge graph (cqa's classes plus
+# this schema's records), published beside godm.ttl.
 [generate.cqa]
-ttl = "site/artifacts/wine-benchmark.ttl"
-instances = ["data/wine-benchmark.yaml"]
+ttl = "site/artifacts/godm-benchmark.ttl"
+instances = ["data/godm-benchmark.yaml"]
 
-# What a benchmark record means (which slots carry absence claims, what
-# short anchors expand against) is declared in cqa's schema, on the
-# slots themselves. This block only says which graphs to hold the claims
-# against.
-[check.cqa]
-# CALLOUT: resolve Every benchmark reference landing in wine's namespace must match an IRI wine's datasets actually mint — and the absence claims cqa's schema declares must hold against them. Only this repo can run these checks, because only this repo holds both graphs.
-resolve_against = ["wine"]
-# CALLOUT: coverage A reference whose namespace no resolve_against entry covers is rejected, so a typo'd base cannot slip past resolution as "external, unchecked".
-require_namespace_coverage = true
+# Step 7 work: once the worked example exists as an A-box listed under
+# [generate.godm], uncomment this block. It holds the benchmark's
+# claims against that graph: every anchor must name an IRI this package's
+# datasets actually mint, every absence claim the contract declares must
+# hold, and no reference may land in a namespace nothing here covers.
+# Until then the anchors are enumerated as unchecked outbound references,
+# which is what a Step-1 benchmark is: the list of records the worked
+# example must mint. What a benchmark record means is declared in cqa's
+# schema, on the slots themselves; this block only says which graphs to
+# hold the claims against.
+# [check.cqa]
+# resolve_against = ["godm"]
+# require_namespace_coverage = true

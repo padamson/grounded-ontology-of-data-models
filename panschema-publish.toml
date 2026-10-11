@@ -1,18 +1,19 @@
 [schema]
-name = "wine"
-version = "0.2.1"
+name = "godm"
+version = "0.1.0"
 linkml = "1.7.0"
 
 [files]
-main = "schema/wine.yaml"
+main = "schema/godm.yaml"
 
 [publishing]
-versions = ["v0.1.0", "v0.2.0", "v0.2.1"]
+versions = []
 edge = "main"
-# On each release: append the new tag to `versions` above and set
-# `current` to it, so `/schema/current/` aliases to the latest release
-# while `/schema/main/` stays the bleeding edge.
-current = "v0.2.1"
+# Release reminder: when releasing the first version, flip `current`
+# from "main" to the new tag (e.g., "main" -> "v0.1.0" in the v0.1.0
+# release commit) so `/schema/current/` aliases to the new release.
+# Also: append the new tag to `versions` above.
+current = "main"
 output_dir = "site/schema"
 format = "html"
 # Header brand/home link target. Our publish dir is site/schema/<version>/,
@@ -20,30 +21,19 @@ format = "html"
 # and the github.io deploy). The panschema default "../current/" assumes a
 # standalone schema-only deploy and is wrong for this book-nested layout.
 site_root_url = "../../"
-site_title = "Building wine"
 
 # Curated instance graphs published behind the schema page's in-page
-# selector (panschema feature 37). `name` labels each tab; `data` is
-# repo-relative. Declaration order drives the selector order (preview
-# first, as the teaching lead-in); `default = true` marks the tab the
-# page opens on (the full worked example). Both render switchably.
-[[instances]]
-name = "preview"
-data = "data/wine-preview.yaml"
-
-[[instances]]
-name = "worked-example"
-data = "data/wine-instances.yaml"
-default = true
-
-# Naming a dependency schema moves this dataset onto a second published
-# page — the cqa contract rendered with wine's benchmark as its instance
-# graph, at site/schema/cqa/. The page exists only at refs where both
-# the dependency and the data do: `v0.2.1` is the first release whose
-# package contains the benchmark, so earlier tags have no such page.
+# selector. `name` labels each tab; `data` is repo-relative. Add the
+# worked example here at Step 7 (`default = true` marks the tab the
+# page opens on).
+#
+# Naming a dependency schema moves a dataset onto a second published
+# page: the cqa contract rendered with this repo's benchmark as its
+# instance graph, at site/schema/cqa/. The page exists only at refs
+# where both the dependency and the data do.
 [[instances]]
 name = "benchmark"
-data = "data/wine-benchmark.yaml"
+data = "data/godm-benchmark.yaml"
 schema = "cqa"
 
 # The benchmark records lead on that page; the contract's reference
@@ -58,10 +48,12 @@ layout = "instances-first"
 # other generated book assets.
 [[book_link]]
 schema_path = "schema/current/"
-label = "Wine schema"
+label = "Schema reference"
 
-# The benchmark page follows the latest release, the same as the
-# schema's own entry above.
+# The benchmark page gains a `current/` alias with the first release,
+# since the benchmark is part of the package from Step 1. Until then this
+# entry points at the bleeding edge; move it to schema/cqa/current/ when
+# `current` above flips.
 [[book_link]]
-schema_path = "schema/cqa/current/"
+schema_path = "schema/cqa/main/"
 label = "CQ&A benchmark"
