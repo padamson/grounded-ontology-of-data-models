@@ -1,0 +1,41 @@
+[book]
+authors = ["Paul Adamson"]
+language = "en"
+src = "src"
+title = "Building wine"
+description = "Building the wine LinkML ontology from scratch, following Ontology Development 101 adapted to LinkML"
+
+[build]
+build-dir = "build"
+
+[preprocessor]
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.1.0" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.listings]
+command = "mdbook-listings"
+before = ["admonish", "links"]
+number-listings = true
+# Renders the source path and frozen tag under each caption, so a reader can
+# see which file a listing is a snapshot of and at which tag. Requires
+# mdbook-listings >= 0.2.1; 0.2.0 silently ignores the key, so keep the local
+# binary in step with the CI pin or the published book and your preview
+# disagree. Because provenance is rendered, a caption must never name the
+# artifact itself -- see `references/captions.md` in the mdbook-listings
+# skill for the full rule set.
+show-listing-provenance = true
+# In-page {{#list-of-listings}} index (see src/list-of-listings.md).
+list-of-listings = true
+# "nested" puts each page's listings under their section heading in the
+# per-page TOC (e.g. Listing 4.1 under "The classes"). NOT "append",
+# whose book-wide section overlays mdbook's TOC with this theme (dogfood
+# finding filed to mdbook-listings 2026-07-27).
+list-of-listings-sidebar = "nested"
+
+[output]
+
+[output.html]
+additional-css = ["./mdbook-admonish.css", "./mdbook-listings.css", "./schema-link.css", "./soft-wrap.css"]
+additional-js = ["./mdbook-listings.js", "./schema-link.js"]

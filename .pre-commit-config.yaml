@@ -1,0 +1,63 @@
+# prek / pre-commit hooks for this ontology-authoring repo.
+#
+# Compatible with both `prek` (the Rust reimplementation) and vanilla
+# `pre-commit` — same config format. Install the runner once:
+#   prek install        # or: pre-commit install
+#
+# All hooks are `local` (language: system): they invoke binaries already on
+# PATH, matching the dogfood setup (see README "Dogfooding the tooling"), so
+# no remote hook repos are pulled. Required on PATH:
+#   - mdbook-listings (main HEAD — dogfood; see the dogfood-loop notes)
+#   - panschema (main HEAD — verifies the curated instance data)
+#   - perl + git (for the line-width gate; both standard)
+repos:
+  - repo: local
+    hooks:
+      - id: mdbook-listings-verify
+        name: mdbook-listings verify (frozen listing drift)
+        # Fails on a frozen snapshot whose bytes no longer match
+        # listings.toml (edited but not re-frozen), or a broken
+        # {{#include}} / {{#callout}}. The integrity check `mdbook build`
+        # does not run on its own. Invoked from the book root.
+        entry: mdbook-listings verify --book-root book
+        language: system
+        pass_filenames: false
+        files: ^(schema/[^/]+\.yaml|book/(src/.*\.md|src/listings/.*|listings\.toml))$
+
+      - id: schema-line-width
+        name: schema content line width (<=72, excl. CALLOUT markers)
+        # Enforces the .yamllint column budget, counted in characters.
+        # Comment-aware (skips CALLOUT marker lines), which yamllint
+        # --strict can't do without false-failing on them.
+        entry: scripts/check-line-width.sh
+        language: system
+        pass_filenames: false
+        files: ^schema/[^/]+\.yaml$
+
+      - id: panschema-verify
+        name: panschema verify (manifest datasets conform, anchors resolve)
+        # A curated A-box that feature 37 publishes to the docs site is a
+        # conformance claim; publish only warns, so gate it here. Bare
+        # `verify --strict` checks everything panschema.toml declares —
+        # each dataset against its own schema, plus the `[check.cqa]`
+        # cross-graph gates. The cqa contract is a pinned dependency
+        # resolved from panschema's local cache, so run `panschema fetch`
+        # once after cloning (CLAUDE.md "Building"); after that the hook
+        # is offline.
+        entry: panschema verify --strict
+        language: system
+        pass_filenames: false
+        files: ^(schema/[^/]+\.yaml|data/.*\.yaml|panschema\.(toml|lock))$
+
+      # `npx skills add` copies the skill and has no version concept, so the
+      # frontmatter's `metadata.version` is the only version an installed
+      # copy carries. A content edit that leaves it alone is invisible to
+      # everyone who already has the skill. Pure bookkeeping, so easy to
+      # forget; the hook makes forgetting impossible.
+      - id: skill-version-bumped
+        name: skill version bumped
+        description: Skill edits must bump the metadata.version consumers refresh against
+        entry: scripts/check-skill-version-bumped.sh
+        language: system
+        pass_filenames: false
+        files: ^skills/
