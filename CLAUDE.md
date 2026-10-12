@@ -172,14 +172,13 @@ defaults to **Global** scope — choose **Project**. Verify by listing
 
 With `-a claude-code` the CLI writes a real directory per skill under
 `.claude/skills/<name>/` and no `.agents/` hub, so the check is that the
-*entry* exists, not that a symlink resolves. `.gitignore` names the fetched
-skills one at a time rather than ignoring the directory, because most of
-`.claude/skills/` here is tracked on purpose.
+*entry* exists, not that a symlink resolves. Every entry there is fetched,
+so `.gitignore` ignores the whole `.claude/skills/` directory and
+`skills-lock.json` is the only tracked record of what is installed.
 
 The Claude Code plugin channel is **not** used for ecosystem skills, and
-this repo carries no `enabledPlugins` for them. Two channels on the same
-`main` went stale in opposite directions; `.claude/skills/README.md` records
-why.
+this repo carries no `enabledPlugins` for them: two channels on the same
+`main` went stale in opposite directions.
 
 ## Conventions
 

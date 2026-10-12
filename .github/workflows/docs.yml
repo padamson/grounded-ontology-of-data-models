@@ -35,33 +35,6 @@ env:
   WASM_PACK_VERSION: "0.14.0"
 
 jobs:
-  # The pre-commit hook is per-clone and `--no-verify` skips it, so assert
-  # the same rule on what actually landed. This repo is trunk-based with
-  # direct pushes, so the aggregate to check is the push itself:
-  # `github.event.before`..HEAD. Skipped when that SHA is unusable — the
-  # first push to a branch reports all-zeros, and a force-push can name a
-  # commit this checkout does not have.
-  skill-version-guard:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Skill version bumped since the previous tip
-        env:
-          BEFORE: ${{ github.event.before }}
-        run: |
-          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "No usable previous tip for this event; nothing to compare."
-            exit 0
-          fi
-          if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-            echo "Previous tip $BEFORE is not in this checkout (force-push?); skipping."
-            exit 0
-          fi
-          scripts/check-skill-version-bumped.sh --base "$BEFORE"
-
   build:
     runs-on: ubuntu-latest
     steps:
